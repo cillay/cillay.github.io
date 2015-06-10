@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial; width: 720px; margin: auto;
+        }
+        .panel {
+            border: 2px solid #999; border-radius: 10px; height: 480px; width: 300px; margin: 15px; float: left; text-align: center;
+        }
+        .panel button {
+            border: 1px solid #000; border-radius: 5px; height: 40px; width: 160px; margin: 5px; text-align: center;
+        }
+        .panel .animation {
+            visibility: hidden;
+        }
+        .panel .output p {
+            font-size: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div id="demoAsync" class="panel">
+        <h1>Async</h1>
+        <button type="button" name="generateData">Generate data</button>
+        <button type="button" name="encryptData" disabled>Encrypt data</button>
+
+        <div class="animation">
+            <img src="loading.gif" />
+        </div>
+
+        <div class="output">
+            <p data-for="generateData"></p>
+            <p data-for="encryptData"></p>
+        </div>
+    </div>
+    <div id="demoSync" class="panel">
+        <h1>Sync</h1>
+        <button type="button" name="generateData">Generate data</button>
+        <button type="button" name="encryptData" disabled>Encrypt data</button>
+
+        <div class="animation">
+            <img src="loading.gif" />
+        </div>
+
+        <div class="output">
+            <p data-for="generateData"></p>
+            <p data-for="encryptData"></p>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+    <p>
+        This demo uses <a href="http://chancejs.com/" target="_blank" style="target-new: tab;">chance.js</a>
+        to generate the data and the
+        <a href="http://bitwiseshiftleft.github.io/sjcl/" target="_blank" style="target-new: tab;">Stanford Javascript Crypto Library (SJCL)</a>
+        to encrypt it with a 128-character key.
+    </p>
+</body>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.0/sjcl.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chance/0.5.6/chance.js"></script>
+<script type="text/javascript" src="browser-polyfill.min.js"></script>
+<script type="text/javascript" src="async-worker.js"></script>
+<script type="text/javascript" src="demo.js"></script>
+</html>
