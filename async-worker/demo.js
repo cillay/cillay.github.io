@@ -46,57 +46,62 @@
             }
         },
         encryptData: function () {
-            return new Promise(function (resolve, reject) {
-                doWork();
-                resolve();
-            });
+            return doWork();
         }
     };
 
-    var encryptArray = Array.apply(0, new Array(10)).map(function () {
-        return new AsyncWorker(crypto.encrypt, [pathToSjcl]);
-    });
+    //var encryptArray = Array.apply(0, new Array(10)).map(function () {
+    //    return new AsyncWorker(crypto.encrypt, [pathToSjcl]);
+    //});
 
-    var decryptArray = Array.apply(0, new Array(10)).map(function () {
-        return new AsyncWorker(crypto.decrypt, [pathToSjcl]);
-    });
+    //var decryptArray = Array.apply(0, new Array(10)).map(function () {
+    //    return new AsyncWorker(crypto.decrypt, [pathToSjcl]);
+    //});
 
     function doWork() {
         var itemCount = sentences.length;
         console.log("Starting...");
+ 
+        var resultsArray = [];
 
-        // Asynchronous
-        if (useAsync) {
-            (function () {
-                var t0 = performance.now();
-                sentences.forEach(function (sentence, index) {
-                    encryptAsync.invoke(sentence).then(function (cipher) {
-                        decryptAsync.invoke(cipher).then(function (text) {
-                            if (index === itemCount - 1) {
-                                var t1 = performance.now();
-                                console.log("Done!")
-                                console.log("encrypt/decrypt async took " + (t1 - t0) + " milliseconds.")
-                            }
+        return new Promise(function (resolve, reject) {
+            // Asynchronous
+            if (useAsync) {
+                (function () {
+                    var t0 = performance.now();
+                    sentences.forEach(function (sentence, index) {
+                        encryptAsync.invoke(sentence).then(function (cipher) {
+                            decryptAsync.invoke(cipher).then(function (text) {
+                                resultsArray.push(text);
+                                if (resultsArray.length === itemCount) {
+                                    var t1 = performance.now();
+                                    console.log("Done!")
+                                    console.log("encrypt/decrypt async took " + (t1 - t0) + " milliseconds.");
+                                    resolve(resultsArray);
+                                }
+                            });
                         });
                     });
-                });
-            })();
-        }
-        else {
-            // Synchronous
-            (function () {
-                var t0 = performance.now();
-                sentences.forEach(function (sentence, index) {
-                    var cipher = crypto.encrypt(sentence);
-                    var text = crypto.decrypt(cipher);
-                    if (index === itemCount - 1) {
-                        var t1 = performance.now();
-                        console.log("Done!")
-                        console.log("encrypt/decrypt sync took " + (t1 - t0) + " milliseconds.")
-                    }
-                });
-            })();
-        }
+                })();
+            }
+            else {
+                // Synchronous
+                (function () {
+                    var t0 = performance.now();
+                    sentences.forEach(function (sentence, index) {
+                        var cipher = crypto.encrypt(sentence);
+                        var text = crypto.decrypt(cipher);
+                        resultsArray.push(text);
+                        if (resultsArray.length === itemCount) {
+                            var t1 = performance.now();
+                            console.log("Done!")
+                            console.log("encrypt/decrypt sync took " + (t1 - t0) + " milliseconds.");
+                            resolve(resultsArray);
+                        }
+                    });
+                })();
+            }
+        });
     }
 
     // Wire up events
